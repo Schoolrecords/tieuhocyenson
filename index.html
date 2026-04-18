@@ -6,7 +6,7 @@
 <!-- ========== ĐỔI TÊN TRƯỜNG Ở ĐÂY KHI TẠO CHO TRƯỜNG MỚI ========== -->
 <title>Hồ sơ số - Trường Tiểu học Yên Sơn</title>
 <meta name="description" content="Hồ sơ số chính thức Trường Tiểu học Yên Sơn, Xã Đô Lương, Tỉnh Nghệ An. Hệ thống quản lý hồ sơ số, danh sách CBGV và học sinh.">
-<link rel="canonical" href="https://tieuhocdientan.netlify.app/">
+<link rel="canonical" href="https://schoolrecords.github.io/tieuhocyenson/">
 <!-- Mobile / PWA-friendly -->
 <meta name="theme-color" content="#2d8a6e">
 <meta name="format-detection" content="telephone=no">
@@ -27,7 +27,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Hồ sơ số Trường Tiểu Học">
 <meta property="og:locale" content="vi_VN">
-<meta property="og:url" content="https://tieuhocdientan.netlify.app/">
+<meta property="og:url" content="https://schoolrecords.github.io/tieuhocyenson/">
 <meta property="og:title" content="Hồ sơ số - Trường Tiểu học Yên Sơn">
 <meta property="og:description" content="Hồ sơ số chính thức Trường Tiểu học Yên Sơn, Xã Đô Lương, Tỉnh Nghệ An. Hệ thống quản lý hồ sơ số, danh sách CBGV và học sinh.">
 <meta property="og:image" content="https://schoolrecords.github.io/tieuhocyenson/og-banner.jpg">
@@ -38,10 +38,10 @@
 <meta property="og:image:alt" content="Hồ sơ số Trường Tiểu học Yên Sơn — Xã Đô Lương, Tỉnh Nghệ An">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:url" content="https://tieuhocdientan.netlify.app/">
+<meta name="twitter:url" content="https://schoolrecords.github.io/tieuhocyenson/">
 <meta name="twitter:title" content="Hồ sơ số - Trường Tiểu học Yên Sơn">
 <meta name="twitter:description" content="Hồ sơ số chính thức Trường Tiểu học Yên Sơn, Xã Đô Lương, Tỉnh Nghệ An.">
-<meta name="twitter:image" content="https://tieuhocdientan.netlify.app/og-banner.jpg">
+<meta name="twitter:image" content="https://schoolrecords.github.io/tieuhocyenson/og-banner.jpg">
 <!-- Zalo — tuỳ chọn: nếu có Zalo OA thì điền ID, nếu không thì bỏ qua -->
 <meta property="zalo:official_account_id" content="">
 <!-- ========== HẾT PHẦN CẦN ĐỔI ========== -->
@@ -629,7 +629,7 @@
     .mc-print-host .mc-p-sign .role{font-weight:700;text-transform:uppercase;margin-top:2pt}
     .mc-print-host .mc-p-sign .gap{height:60pt}
     .mc-print-host .clear{clear:both}
-    @page{size:A4 landscape;margin:10mm 5mm 10mm 15mm}
+    @page{size:A4 landscape;margin:15mm 15mm 10mm 25mm}
   }
   .mc-print-host{display:none}
 </style>
@@ -952,12 +952,6 @@
               <label>Email</label>
               <input type="email" id="admEmail" placeholder="VD: truong@nghean.edu.vn">
             </div>
-          </div>
-          <hr class="adm-divider">
-          <div class="adm-field">
-            <label>URL API (Google Apps Script)</label>
-            <input type="text" id="admApi" placeholder="https://script.google.com/macros/s/AKfyc.../exec">
-            <small>URL Web App sau khi triển khai GAS. Thay đổi URL này sẽ kết nối tới Google Sheet khác.</small>
           </div>
           <hr class="adm-divider">
           <div class="adm-field">
@@ -2472,7 +2466,7 @@
     document.getElementById('admPhone').value = adm.schoolPhone || cfg.phone || '';
     document.getElementById('admEmail').value = adm.schoolEmail || cfg.email || '';
     document.getElementById('admYear').value = adm.schoolYear || cfg.schoolYear || '';
-    document.getElementById('admApi').value = adm.apiUrl || API_URL || '';
+    // URL API hardcoded trong index.html, không cho sửa trong Admin UI nữa
     // Theme picker
     const curTheme = adm.theme || 'green';
     document.querySelectorAll('#admThemePicker label').forEach(l => {
@@ -2501,10 +2495,9 @@
     const phone = document.getElementById('admPhone').value.trim();
     const email = document.getElementById('admEmail').value.trim();
     const year = document.getElementById('admYear').value.trim();
-    const apiUrl = document.getElementById('admApi').value.trim();
     const theme = checkedTheme ? checkedTheme.value : 'green';
 
-    _admSet({ schoolName: name, schoolAddr: addr, schoolPhone: phone, schoolEmail: email, schoolYear: year, apiUrl: apiUrl, theme: theme });
+    _admSet({ schoolName: name, schoolAddr: addr, schoolPhone: phone, schoolEmail: email, schoolYear: year, theme: theme });
     admApplyConfig();
 
     // Ghi lên Google Sheet (CauHinh)
@@ -2931,7 +2924,7 @@
   // Áp dụng config từ localStorage khi boot
   function admInitConfig(){
     const adm = _admGet();
-    if(adm.apiUrl) window._admApiOverride = adm.apiUrl;
+    // URL API luôn dùng hardcoded API_URL (không cho override từ localStorage)
     admApplyConfig();
   }
   admInitConfig();
