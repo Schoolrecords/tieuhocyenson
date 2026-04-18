@@ -608,7 +608,8 @@
   /* Print layout — "In theo mẫu" */
   @media print{
     body>*:not(.mc-print-host){display:none!important}
-    .mc-print-host{display:block!important;padding:0;background:white;color:#000;font-family:'Times New Roman',serif;font-size:10pt;line-height:1.35}
+    /* Lề: trái 2,5cm · phải 1,5cm · trên 1,5cm · dưới 1cm (quy chuẩn VB hành chính) */
+    .mc-print-host{display:block!important;padding:15mm 15mm 10mm 25mm;background:white;color:#000;font-family:'Times New Roman',serif;font-size:10pt;line-height:1.35;box-sizing:border-box}
     .mc-print-host .mc-p-header{display:table;width:100%;margin-bottom:6pt}
     .mc-print-host .mc-p-header>div{display:table-cell;width:50%;vertical-align:top;text-align:center}
     .mc-print-host .mc-p-header b{display:block;font-weight:700;text-transform:uppercase}
@@ -629,7 +630,8 @@
     .mc-print-host .mc-p-sign .role{font-weight:700;text-transform:uppercase;margin-top:2pt}
     .mc-print-host .mc-p-sign .gap{height:60pt}
     .mc-print-host .clear{clear:both}
-    @page{size:A4 landscape;margin:15mm 15mm 10mm 25mm}
+    /* @page margin = 0 để padding trong .mc-print-host quyết định lề thực tế */
+    @page{size:A4 landscape;margin:0}
   }
   .mc-print-host{display:none}
 </style>
@@ -2057,6 +2059,15 @@
         '<div class="clear"></div>'+
       '</div>';
 
+    // Đổi document.title để trình duyệt lấy làm tên file PDF mặc định,
+    // khôi phục lại sau khi đóng hộp thoại in.
+    const _origTitle = document.title;
+    const _fileTitle = 'Danh muc Minh chung - ' + schoolName;
+    document.title = _fileTitle;
+    const _restore = () => { document.title = _origTitle; window.removeEventListener('afterprint', _restore); };
+    window.addEventListener('afterprint', _restore);
+    setTimeout(_restore, 60000); // fallback an toàn sau 60s
+
     window.print();
   }
 
@@ -2527,11 +2538,14 @@
     const theme = adm.theme || 'green';
     if(theme !== 'green') document.documentElement.setAttribute('data-theme', theme);
     else document.documentElement.removeAttribute('data-theme');
-    if(adm.schoolName){
+    // Ưu tiên dữ liệu từ Google Sheet (STATS.config) hơn localStorage cũ,
+    // tránh trường hợp localStorage còn sót tên trường cũ (Diễn Tân...).
+    const liveName = (window.STATS && STATS.config && STATS.config.name) || adm.schoolName;
+    if(liveName){
       document.querySelectorAll('.logo span').forEach(el => {
-        if(!el.classList.contains('dot')) el.textContent = adm.schoolName.replace(/^Trường\s*/i,'');
+        if(!el.classList.contains('dot')) el.textContent = liveName.replace(/^Trường\s*/i,'');
       });
-      document.title = 'Hồ sơ số - ' + adm.schoolName;
+      document.title = 'Hồ sơ số - ' + liveName;
     }
     if(adm.schoolAddr) document.getElementById('cfgAddress').textContent = adm.schoolAddr;
     if(adm.schoolPhone) document.getElementById('cfgPhone').textContent = adm.schoolPhone;
